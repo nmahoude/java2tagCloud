@@ -16,26 +16,34 @@ public class Java2TagCloud {
   Map<String, WordOccurence> wordsMap = new HashMap<>();
   private static final ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
 
-  public static void old_main(String[] args) {
-    ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
-    Path file = Paths.get(classLoader.getResource("test.java").getFile());
-
-    new Java2TagCloud().handleFile(file);
-  }
-  
-  
   public static void main(String[] args) throws IOException {
-    Path file = Paths.get("/home/nicolas/Dev/projects/DT/quizzadm/sources/");
+    if (args.length != 1) {
+      System.err.println("usage : Java2TagCloud <projectFolder>");
+    }
+    Path file = Paths.get(args[0]);
     
     Java2TagCloud java2TagCloud = new Java2TagCloud();
     
     Files.walk(file, FileVisitOption.FOLLOW_LINKS).allMatch( path -> {
-      if (path.toFile().isFile() && path.getFileName().toString().endsWith(".java")) {
+      if (isFileAcceptable(path)) {
         java2TagCloud.handleFile(path);
       }
       return true;
     });
     java2TagCloud.printReport();
+  }
+
+  static boolean isFileAcceptable(Path path) {
+    if (!path.toFile().isFile()) {
+      return false;
+    }
+    if (!path.getFileName().toString().endsWith(".java")) {
+      return false;
+    }
+    if (path.toAbsolutePath().toString().contains("/src/test/")) {
+      return false;
+    }
+    return true;
   }
 
   void handleFile(Path file) {
@@ -47,18 +55,18 @@ public class Java2TagCloud {
         handleOneLine(line);
       }
     } catch (IOException x) {
-      System.err.format("IOException: %s%n", x);
+      System.err.format("IOException: %s", x);
     }
   }
 
   void printReport() {
     List<WordOccurence> occurences = wordsMap.values().stream()
         .filter(occurence -> { return occurence.getWord().length() > 3;})
+        .filter(occurence -> { return occurence.getCount() > 3;})
         .sorted((occurence1, occurence2) -> Integer.compare(occurence2.getCount(),occurence1.getCount()))
         .collect(Collectors.toList());
 
     TagCloud tagCloud = new TagCloud(occurences);
-    
     Path output = Paths.get("wordtag.png");
     tagCloud.generateTagCloud(output);
   }
