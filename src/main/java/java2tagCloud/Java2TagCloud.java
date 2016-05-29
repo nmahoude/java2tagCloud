@@ -67,7 +67,7 @@ public class Java2TagCloud {
   }
 
   void handleOneLine(String line) {
-    if (keywordFilter .filterLine(line)) {
+    if (keywordFilter.filterLine(line)) {
       return;
     }
     String words[] = line.split("\\W*\\W");

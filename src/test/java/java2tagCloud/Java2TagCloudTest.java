@@ -3,6 +3,8 @@ package java2tagCloud;
 import org.junit.Test;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 
 public class Java2TagCloudTest {
 
@@ -56,6 +58,17 @@ public class Java2TagCloudTest {
     assertThat(words.length, is(2));
     assertThat(words[0], is("two"));
     assertThat(words[1], is("Word"));
+  }
+
+  @Test
+  public void testWordFilter_class() throws Exception {
+    Java2TagCloud j2tc = new Java2TagCloud();
+    
+    j2tc.handleOneLine("class Test");
+    
+    assertThat(j2tc.wordsMap.size(), is(1));
+    assertThat(j2tc.wordsMap.get("class"), is(nullValue()));
+    assertThat(j2tc.wordsMap.get("test"), is(notNullValue()));
   }
   
 }
