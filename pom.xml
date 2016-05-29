@@ -5,20 +5,25 @@
 	<artifactId>java2tagCloud</artifactId>
 	<version>0.1-SNAPSHOT</version>
 
-<dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>2.0.28-beta</version>
-      <scope>test</scope>
-    </dependency>
-</dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.0.28-beta</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.kennycason</groupId>
+			<artifactId>kumo</artifactId>
+			<version>1.5</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -32,6 +37,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 
 </project>

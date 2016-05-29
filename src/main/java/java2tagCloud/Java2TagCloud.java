@@ -53,12 +53,12 @@ public class Java2TagCloud {
 
   void printReport() {
     List<WordOccurence> occurences = wordsMap.values().stream()
+        .filter(occurence -> { return occurence.getWord().length() > 3;})
         .sorted((occurence1, occurence2) -> Integer.compare(occurence2.getCount(),occurence1.getCount()))
         .collect(Collectors.toList());
 
-    for (WordOccurence occurence : occurences) {
-      System.out.println(occurence.getWord() + " =>" + occurence.getCount());
-    }
+    TagCloud tagCloud = new TagCloud();
+    tagCloud.generateTagCloud(occurences);
   }
 
   void handleOneLine(String line) {
