@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class Java2TagCloud {
   Map<String, WordOccurence> wordsMap = new HashMap<>();
+  private static final ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
 
   public static void old_main(String[] args) {
     ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
@@ -24,7 +25,6 @@ public class Java2TagCloud {
   
   
   public static void main(String[] args) throws IOException {
-    ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
     Path file = Paths.get("/home/nicolas/Dev/projects/DT/quizzadm/sources/");
     
     Java2TagCloud java2TagCloud = new Java2TagCloud();
@@ -57,8 +57,10 @@ public class Java2TagCloud {
         .sorted((occurence1, occurence2) -> Integer.compare(occurence2.getCount(),occurence1.getCount()))
         .collect(Collectors.toList());
 
-    TagCloud tagCloud = new TagCloud();
-    tagCloud.generateTagCloud(occurences);
+    TagCloud tagCloud = new TagCloud(occurences);
+    
+    Path output = Paths.get("wordtag.png");
+    tagCloud.generateTagCloud(output);
   }
 
   void handleOneLine(String line) {

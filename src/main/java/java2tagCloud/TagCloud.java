@@ -2,6 +2,7 @@ package java2tagCloud;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,13 @@ import com.kennycason.kumo.palette.ColorPalette;
 
 public class TagCloud {
   
-  public void generateTagCloud(List<WordOccurence> occurences) {
+  private List<WordOccurence> occurences;
+
+  public TagCloud(List<WordOccurence> occurences) {
+    this.occurences = occurences;
+  }
+
+  public void generateTagCloud(Path outputFile) {
     
     final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
     
@@ -30,6 +37,8 @@ public class TagCloud {
     wordCloud.setColorPalette(new ColorPalette(new Color(0x4055F1), new Color(0x408DF1), new Color(0x40AAF1), new Color(0x40C5F1), new Color(0x40D3F1), new Color(0xFFFFFF)));
     wordCloud.setFontScalar( new SqrtFontScalar(10, 40));
     wordCloud.build(wordFrequencies);
-    wordCloud.writeToFile("/home/nicolas/Dev/projects/github/java2tagCloud/wordcloud.png");
+    
+    
+    wordCloud.writeToFile(outputFile.toString());
   }
 }
