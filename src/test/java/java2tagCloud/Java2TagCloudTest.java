@@ -2,6 +2,9 @@ package java2tagCloud;
 
 import org.junit.Test;
 import static org.junit.Assert.assertThat;
+
+import java.nio.file.Paths;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -15,7 +18,7 @@ public class Java2TagCloudTest {
 
   @Test
   public void testExtractCamelCaseWords_whenNull() throws Exception {
-    Java2TagCloud j2tc = new Java2TagCloud();
+    Java2TagCloud j2tc = new Java2TagCloud(Paths.get("."));
     
     String[] words = j2tc.extractCamelCaseWords(null);
     
@@ -24,7 +27,7 @@ public class Java2TagCloudTest {
 
   @Test
   public void testExtractCamelCaseWords_whenEmpty() throws Exception {
-    Java2TagCloud j2tc = new Java2TagCloud();
+    Java2TagCloud j2tc = new Java2TagCloud(Paths.get("."));
     
     String[] words = j2tc.extractCamelCaseWords("");
     
@@ -33,7 +36,7 @@ public class Java2TagCloudTest {
 
   @Test
   public void testExtractCamelCaseWords_whenSpacesOnly() throws Exception {
-    Java2TagCloud j2tc = new Java2TagCloud();
+    Java2TagCloud j2tc = new Java2TagCloud(Paths.get("."));
     
     String[] words = j2tc.extractCamelCaseWords("   ");
     
@@ -42,7 +45,7 @@ public class Java2TagCloudTest {
 
   @Test
   public void testExtractCamelCaseWords_whenNoCamel() throws Exception {
-    Java2TagCloud j2tc = new Java2TagCloud();
+    Java2TagCloud j2tc = new Java2TagCloud(Paths.get("."));
     
     String[] words = j2tc.extractCamelCaseWords("oneword");
     
@@ -51,7 +54,7 @@ public class Java2TagCloudTest {
   }
   @Test
   public void testExtractCamelCaseWords_whenCamel() throws Exception {
-    Java2TagCloud j2tc = new Java2TagCloud();
+    Java2TagCloud j2tc = new Java2TagCloud(Paths.get("."));
     
     String[] words = j2tc.extractCamelCaseWords("twoWord");
     
@@ -62,7 +65,7 @@ public class Java2TagCloudTest {
 
   @Test
   public void testWordFilter_class() throws Exception {
-    Java2TagCloud j2tc = new Java2TagCloud();
+    Java2TagCloud j2tc = new Java2TagCloud(Paths.get("."));
     
     j2tc.handleOneLine("class Test");
     

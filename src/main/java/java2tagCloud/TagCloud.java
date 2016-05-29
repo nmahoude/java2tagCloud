@@ -32,14 +32,16 @@ public class TagCloud {
     List<WordFrequency> wordFrequencies = new ArrayList<>();
     occurences.forEach(occurence -> wordFrequencies.add(new WordFrequency(occurence.getWord(), occurence.getCount())));
     
-    final Dimension dimension = new Dimension(600, 600);
+    final int size = 1024;
+    
+    final Dimension dimension = new Dimension(size, size);
     final WordCloud wordCloud = new WordCloud(dimension, CollisionMode.RECTANGLE);
     wordCloud.setPadding(1);
     wordCloud.setKumoFont(new KumoFont("Hack", FontWeight.BOLD));
-    wordCloud.setBackground(new CircleBackground(300));
+    wordCloud.setBackground(new CircleBackground(size/2));
     wordCloud.setBackgroundColor(new Color(0x808790));
     wordCloud.setColorPalette(new ColorPalette(new Color(0x4055F1), new Color(0x408DF1), new Color(0x40AAF1), new Color(0x40C5F1), new Color(0x40D3F1), new Color(0xFFFFFF)));
-    wordCloud.setFontScalar( new SqrtFontScalar(10, 40));
+    wordCloud.setFontScalar( new SqrtFontScalar(10, 80));
     wordCloud.setAngleGenerator(new AngleGenerator(0));
     wordCloud.build(wordFrequencies);
     

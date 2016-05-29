@@ -13,7 +13,7 @@ public class KeywordFilter {
 
   private Set<String> keywords = new HashSet<>();
   
-  public void loadOneKeywordFile(String filename) {
+  public void loadKeywordFile(String filename) {
     ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
     Path file = Paths.get(classLoader.getResource(filename).getFile());
     
@@ -35,12 +35,5 @@ public class KeywordFilter {
    */
   public boolean filter(String word) {
     return keywords.contains(word);
-  }
-
-  public boolean filterLine(String line) {
-    if (line.trim().startsWith("import")) {
-      return true;
-    }
-    return false;
   }
 }

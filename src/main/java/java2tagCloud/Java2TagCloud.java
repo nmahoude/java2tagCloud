@@ -13,53 +13,44 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Java2TagCloud {
+  static final String FILE_ENCODING = "UTF-8";
   Map<String, WordOccurence> wordsMap = new HashMap<>();
-  private KeywordFilter keywordFilter = new KeywordFilter();
-  
-  private static final ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
+  JavaFilter javaFilter = new JavaFilter();
+  Path projectPath;
+
+  public Java2TagCloud(Path projectPath) {
+    this.projectPath = projectPath;
+  }
 
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {
       System.err.println("usage : Java2TagCloud <projectFolder>");
+      return;
     }
-    Path file = Paths.get(args[0]);
-    
-    Java2TagCloud java2TagCloud = new Java2TagCloud();
-    
-    Files.walk(file, FileVisitOption.FOLLOW_LINKS).allMatch( path -> {
-      if (isFileAcceptable(path)) {
-        java2TagCloud.handleFile(path);
-      }
-      return true;
-    });
+    Path projectPath = Paths.get(args[0]);
+
+    Java2TagCloud java2TagCloud = new Java2TagCloud(projectPath);
+    java2TagCloud.analyseFiles();
     java2TagCloud.printReport();
   }
 
-  public Java2TagCloud() {
-    keywordFilter.loadOneKeywordFile("javakeywords");
-    keywordFilter.loadOneKeywordFile("javaclasses");
-    keywordFilter.loadOneKeywordFile("specialkeywords");
-  }
-  
-  static boolean isFileAcceptable(Path path) {
-    if (!path.toFile().isFile()) {
-      return false;
-    }
-    if (!path.getFileName().toString().endsWith(".java")) {
-      return false;
-    }
-    if (path.toAbsolutePath().toString().contains("/src/test/")) {
-      return false;
-    }
-    return true;
+  void analyseFiles() throws IOException {
+    Files.walk(projectPath, FileVisitOption.FOLLOW_LINKS).allMatch(path -> {
+      if (javaFilter.isFileAcceptable(path)) {
+        handleFile(path);
+      }
+      return true;
+    });
   }
 
   void handleFile(Path file) {
-    Charset charset = Charset.forName("US-ASCII");
+    Charset charset = Charset.forName(FILE_ENCODING);
     try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
       String line = null;
       while ((line = reader.readLine()) != null) {
-        handleOneLine(line);
+        if (!javaFilter.filterLine(line)) {
+          handleOneLine(line);
+        }
       }
     } catch (IOException x) {
       System.err.format("IOException: %s", x);
@@ -67,12 +58,9 @@ public class Java2TagCloud {
   }
 
   void handleOneLine(String line) {
-    if (keywordFilter.filterLine(line)) {
-      return;
-    }
     String words[] = line.split("\\W*\\W");
     for (String word : words) {
-      if (!keywordFilter.filter(word)) {
+      if (!javaFilter.filter(word)) {
         handleOneWord(word);
       }
     }
@@ -93,11 +81,11 @@ public class Java2TagCloud {
 
   String[] extractCamelCaseWords(String word) {
     if (word == null) {
-      return new String[]{};
+      return new String[] {};
     }
     word = word.trim();
     if ("".equals(word)) {
-      return new String[]{};
+      return new String[] {};
     }
     String camelCutWords[] = word.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
     return camelCutWords;
@@ -105,9 +93,13 @@ public class Java2TagCloud {
 
   void printReport() {
     List<WordOccurence> occurences = wordsMap.values().stream()
-        .filter(occurence -> { return occurence.getWord().length() > 3;})
-        .filter(occurence -> { return occurence.getCount() > 3;})
-        .sorted((occurence1, occurence2) -> Integer.compare(occurence2.getCount(),occurence1.getCount()))
+        .filter(occurence -> {
+          return occurence.getWord().length() > 3;
+        })
+        .filter(occurence -> {
+          return occurence.getCount() > 3;
+        })
+        .sorted((occurence1, occurence2) -> Integer.compare(occurence2.getCount(), occurence1.getCount()))
         .collect(Collectors.toList());
 
     TagCloud tagCloud = new TagCloud(occurences);
