@@ -9,17 +9,11 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JavaKeywordFilter {
+public class KeywordFilter {
 
-  private static Set<String> keywords = new HashSet<>();
+  private Set<String> keywords = new HashSet<>();
   
-  static {
-    loadOneKeywordFile("javakeywords");
-    loadOneKeywordFile("javaclasses");
-    loadOneKeywordFile("specialkeywords");
-  }
-  
-  private static void loadOneKeywordFile(String filename) {
+  public void loadOneKeywordFile(String filename) {
     ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
     Path file = Paths.get(classLoader.getResource(filename).getFile());
     
@@ -35,15 +29,15 @@ public class JavaKeywordFilter {
   }
   
   /**
-   * return true if the word is a javakeyword
+   * return true if the word is a known keyword
    * @param word
    * @return
    */
-  public static boolean filter(String word) {
+  public boolean filter(String word) {
     return keywords.contains(word);
   }
 
-  public static boolean filterLine(String line) {
+  public boolean filterLine(String line) {
     if (line.trim().startsWith("import")) {
       return true;
     }

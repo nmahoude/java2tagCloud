@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 public class Java2TagCloud {
   Map<String, WordOccurence> wordsMap = new HashMap<>();
+  private KeywordFilter keywordFilter = new KeywordFilter();
+  
   private static final ClassLoader classLoader = Java2TagCloud.class.getClassLoader();
 
   public static void main(String[] args) throws IOException {
@@ -33,6 +35,12 @@ public class Java2TagCloud {
     java2TagCloud.printReport();
   }
 
+  public Java2TagCloud() {
+    keywordFilter.loadOneKeywordFile("javakeywords");
+    keywordFilter.loadOneKeywordFile("javaclasses");
+    keywordFilter.loadOneKeywordFile("specialkeywords");
+  }
+  
   static boolean isFileAcceptable(Path path) {
     if (!path.toFile().isFile()) {
       return false;
@@ -47,7 +55,6 @@ public class Java2TagCloud {
   }
 
   void handleFile(Path file) {
-
     Charset charset = Charset.forName("US-ASCII");
     try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
       String line = null;
@@ -59,25 +66,13 @@ public class Java2TagCloud {
     }
   }
 
-  void printReport() {
-    List<WordOccurence> occurences = wordsMap.values().stream()
-        .filter(occurence -> { return occurence.getWord().length() > 3;})
-        .filter(occurence -> { return occurence.getCount() > 3;})
-        .sorted((occurence1, occurence2) -> Integer.compare(occurence2.getCount(),occurence1.getCount()))
-        .collect(Collectors.toList());
-
-    TagCloud tagCloud = new TagCloud(occurences);
-    Path output = Paths.get("wordtag.png");
-    tagCloud.generateTagCloud(output);
-  }
-
   void handleOneLine(String line) {
-    if (JavaKeywordFilter.filterLine(line)) {
+    if (keywordFilter .filterLine(line)) {
       return;
     }
     String words[] = line.split("\\W*\\W");
     for (String word : words) {
-      if (!JavaKeywordFilter.filter(word)) {
+      if (!keywordFilter.filter(word)) {
         handleOneWord(word);
       }
     }
@@ -106,5 +101,17 @@ public class Java2TagCloud {
     }
     String camelCutWords[] = word.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
     return camelCutWords;
+  }
+
+  void printReport() {
+    List<WordOccurence> occurences = wordsMap.values().stream()
+        .filter(occurence -> { return occurence.getWord().length() > 3;})
+        .filter(occurence -> { return occurence.getCount() > 3;})
+        .sorted((occurence1, occurence2) -> Integer.compare(occurence2.getCount(),occurence1.getCount()))
+        .collect(Collectors.toList());
+
+    TagCloud tagCloud = new TagCloud(occurences);
+    Path output = Paths.get("wordtag.png");
+    tagCloud.generateTagCloud(output);
   }
 }
